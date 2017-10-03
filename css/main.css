@@ -2,3 +2,22 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box; }
+
+.game {
+  width: 100%;
+  height: 100%;
+  background: #000; }
+  .game .game__menu {
+    display: flex;
+    height: 50px;
+    padding: 5px;
+    background: #333; }
+    .game .game__menu .btn {
+      padding: 10px;
+      cursor: pointer; }
+  .game .game__action-wrapper {
+    display: flex; }
+  .game .game__info {
+    background: #444; }
+  .game .game__action-area {
+    background: #fff; }
