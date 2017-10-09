@@ -15,8 +15,10 @@ canvas.width = innerWidth - (innerWidth / 6);
 canvas.height = innerHeight - menu.offsetHeight;
 
 window.addEventListener(`mousemove`, mouseMoveEvent);
+window.addEventListener(`keydown`, keyDownEvent);
+window.addEventListener(`keyup`, keyUpEvent)
 
-let someobj = new BaseObject(ctx);
+const player = new BaseObject(canvas);
 
 animate();
 
@@ -25,7 +27,7 @@ function animate() {
   
   clear(ctx);
   
-  someobj.update(MOUSE.x, MOUSE.y);
+  player.update(MOUSE.x, MOUSE.y);
 }
 
 function clear(ctx) {
@@ -36,4 +38,26 @@ function clear(ctx) {
 function mouseMoveEvent(e) {
   MOUSE.x = Math.round(e.pageX - canvas.getBoundingClientRect().left);
   MOUSE.y = Math.round(e.pageY - canvas.getBoundingClientRect().top);
+}
+
+function keyDownEvent(e) {
+  console.log(e.keyCode);
+  if (e.keyCode === 39 || e.keyCode === 68) {
+    player.dir = `right`;
+  }
+  else if (e.keyCode === 37 || e.keyCode === 65) {
+    player.dir = `left`;
+  }
+}
+
+function keyUpEvent(e) {
+  if (e.keyCode === 39 || e.keyCode === 68) {
+    player.dir = undefined;
+  }
+  else if (e.keyCode === 37 || e.keyCode === 65) {
+    player.dir = undefined;
+  }
+  if (e.keyCode === 38 || e.keyCode === 87) {
+    player.jump();
+  }
 }
