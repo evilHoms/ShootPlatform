@@ -1,22 +1,69 @@
 'use strict';
 
 class BaseObject {
-  
-  constructor(canvas, x = 0, y = 0, width = 20, height = 20, color = `#000`) {
-    
-    this.G = 1;
-    this.V = 3;
-    this.JUMP_STRENGHT = 10;
+  constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
     
     this.ctx = canvas.getContext(`2d`);
     this.canvas = canvas;
     
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
+    this.drawRoute = drawRoute;
     this.color = color;
-    this.radius = Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2));
+    
+    this.state = {
+      isMovable: false,
+      isAlive: false,
+      isBoundable: false
+    };
+  }
+  
+  draw() {
+    
+    const c = this.ctx;
+    let minX = this.drawRoute[0][0];
+    let maxX = this.drawRoute[0][0];
+    let minY = this.drawRoute[0][1];
+    let maxY = this.drawRoute[0][1];
+
+    c.beginPath();
+    c.moveTo(this.x + this.drawRoute[0][0], this.y + this.drawRoute[0][1]);
+    
+    for (let i = 1; i < this.drawRoute.length; i++) {
+      c.lineTo(this.x + this.drawRoute[i][0], this.y + this.drawRoute[i][1]);
+      
+      if (this.drawRoute[i][0] < minX) minX = this.drawRoute[i][0];
+      else if (this.drawRoute[i][0] > maxX) maxX = this.drawRoute[i][0];
+      
+      if (this.drawRoute[i][1] < minY) minY = this.drawRoute[i][1];
+      else if (this.drawRoute[i][1] > maxY) maxY = this.drawRoute[i][1];
+
+    }
+    
+    c.fillStyle = this.color;
+    c.fill();
+    
+    this.width = maxX - minX;
+    this.height = maxY - minY;
+  }
+  
+  update() {
+    
+    this.draw();
+  }
+  
+}
+
+class MovingObject extends BaseObject {
+  constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
+    super(canvas, drawRoute, x, y, color);
+    
+    this.ctx = canvas.getContext(`2d`);
+    this.canvas = canvas;
+    
+    this.x = x;
+    this.y = y;
+    this.color = color;
     
     this.dir = undefined;
     this.speed = {
@@ -24,16 +71,22 @@ class BaseObject {
       vy: 0
     };
     
+    this.state = {
+      isMovable: true,
+      isAlive: true,
+      isBoundable: true
+    };
+    
     this.isGrounded = false;
     
   }
   
+  get G() { return 1; }
+  get V() { return 3; }
+  get JUMP_STRENGHT() { return 10; }
+  
   draw() {
-    const c = this.ctx;
-    c.beginPath()
-    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    c.fillStyle = this.color;
-    c.fill();
+    super.draw();
   }
   
   update() {
@@ -46,7 +99,7 @@ class BaseObject {
     this.onGround();
     this.fall();
     
-    this.draw();
+    super.update();
     
   }
   
@@ -76,17 +129,17 @@ class BaseObject {
   
   borderBound() {
     
-    if (this.y + this.radius > canvas.height) {
-      this.y = canvas.height - this.radius;
+    if (this.y + this.height > canvas.height) {
+      this.y = canvas.height - this.height;
       this.speed.vy = -Math.abs(this.speed.vy) / 2;
     }
     
-    if (this.x + this.radius > canvas.width) {
-      this.x = canvas.width - this.radius;
+    if (this.x + this.width > canvas.width) {
+      this.x = canvas.width - this.width;
       this.speed.vx = -Math.abs(this.speed.vx);
     }
-    else if(this.x - this.radius < 0) {
-      this.x = 0 + this.radius;
+    else if(this.x < 0) {
+      this.x = 0;
       this.speed.vx = Math.abs(this.speed.vx);
     }
     
@@ -94,9 +147,9 @@ class BaseObject {
   
   onGround() {
     if (this.speed.vy < 1 && this.speed.vy > -1 &&
-       this.y + this.radius >= canvas.height) {
+       this.y + this.height >= canvas.height) {
       this.speed.vy = 0;
-      this.y = canvas.height - this.radius;
+      this.y = canvas.height - this.height;
       this.isGrounded = true;
     }
     else {
@@ -104,4 +157,33 @@ class BaseObject {
     }
   }
   
+}
+  
+class ImmovableObject extends BaseObject {
+  constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
+    super(canvas, drawRoute, x, y, color);
+    this.ctx = canvas.getContext(`2d`);
+    this.canvas = canvas;
+    
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    
+    this.state = {
+      isMovable: false,
+      isAlive: false,
+      isBoundable: true
+    };
+    
+  }
+  
+  draw() {
+    
+    super.draw();
+  }
+  
+  update() {
+    
+    super.update();
+  }
 }
