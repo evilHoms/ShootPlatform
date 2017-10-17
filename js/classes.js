@@ -1,5 +1,21 @@
 'use strict';
 
+// Объект принимает массив объектов и строит уровень
+// Должен иметь методы для отрисовки и обновления всех объектов в массиве, управлять условиями победы\поражения
+class Level {
+  construct() {
+    
+  }
+}
+
+// Объект данного класса должен будет читать схему уровня и возвращать массив объектов
+class LevelParse {
+  constructor() {
+    
+  }
+}
+
+// Базвый класс для объектов в канвасе
 class BaseObject {
   constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
     
@@ -54,6 +70,7 @@ class BaseObject {
   
 }
 
+// Базовый класс для движущихся объектов
 class MovingObject extends BaseObject {
   constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
     super(canvas, drawRoute, x, y, color);
@@ -158,7 +175,8 @@ class MovingObject extends BaseObject {
   }
   
 }
-  
+
+// Базовый класс для неподвижных объектов
 class ImmovableObject extends BaseObject {
   constructor(canvas, drawRoute = [[0, 0]], x = 0, y = 0, color = `#000`) {
     super(canvas, drawRoute, x, y, color);
